@@ -1,16 +1,128 @@
-# React + Vite
+# 📋 Project Management App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern project management application built with React, featuring authentication, protected routing, and a clean dashboard layout.
 
-Currently, two official plugins are available:
+## 🚀 Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+| Category | Technology |
+|---|---|
+| **Framework** | React 19 |
+| **Build Tool** | Vite 7 |
+| **Styling** | Tailwind CSS 4 |
+| **State Management** | Redux Toolkit |
+| **Routing** | React Router v7 |
+| **Language** | JavaScript (ES Modules) |
 
-## React Compiler
+## 📁 Project Structure
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```
+src/
+├── components/
+│   ├── layout/
+│   │   ├── AppLayout.jsx       # Authenticated layout (sidebar + topbar + outlet)
+│   │   ├── GuestLayout.jsx     # Unauthenticated layout (minimal wrapper)
+│   │   ├── Sidebar.jsx         # Navigation sidebar with NavLink active states
+│   │   └── TopBar.jsx          # Top header bar with user info & logout
+│   ├── ui/
+│   │   └── Button.jsx          # Reusable button component
+│   ├── ProtectedRoute.jsx      # Redirects to /login if not authenticated
+│   └── GuestRoute.jsx          # Redirects to / if already authenticated
+├── features/
+│   └── auth/
+│       └── authSlice.js        # Redux slice for auth (login/logout + localStorage)
+├── pages/
+│   ├── Dashboard.jsx           # Dashboard page
+│   ├── Projects.jsx            # Projects page
+│   ├── Tasks.jsx               # Tasks page
+│   └── Login.jsx               # Login page with form
+├── store/
+│   └── index.js                # Redux store configuration
+├── App.jsx                     # Router setup with route guards
+├── main.jsx                    # Entry point with Redux Provider
+└── index.css                   # Global styles + Tailwind import
+```
 
-## Expanding the ESLint configuration
+## ✨ Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Authentication
+- Login/Logout with Redux Toolkit state management
+- Auth state persisted in `localStorage` (survives page refresh)
+- Auto-redirect based on authentication status
+
+### Route Guards
+- **ProtectedRoute** — unauthenticated users are redirected to `/login`
+- **GuestRoute** — authenticated users are redirected to `/` (dashboard)
+
+### Layout System
+- **AppLayout** — sidebar + topbar layout for authenticated pages (uses React Router `<Outlet />`)
+- **GuestLayout** — minimal layout for public pages (login, register)
+
+### Navigation
+- Sidebar with `NavLink` for automatic active-state highlighting
+- Client-side routing (no full page reloads)
+
+## 🛠️ Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18 or higher recommended)
+- npm
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/adityarout8055/Project-management-app.git
+cd Project-management-app
+
+# Install dependencies
+npm install
+```
+
+### Development
+
+```bash
+# Start the dev server
+npm run dev
+```
+
+The app will be available at `http://localhost:5173`
+
+### Build
+
+```bash
+# Create production build
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+### Linting
+
+```bash
+npm run lint
+```
+
+## 🗺️ Routes
+
+| Path | Auth Required | Description |
+|---|---|---|
+| `/` | ✅ | Dashboard |
+| `/projects` | ✅ | Projects page |
+| `/tasks` | ✅ | Tasks page |
+| `/login` | ❌ | Login page (redirects to `/` if already logged in) |
+
+## 📝 Roadmap
+
+- [ ] Register page
+- [ ] Real API integration for authentication
+- [ ] Project CRUD operations
+- [ ] Task management with drag & drop
+- [ ] Team collaboration features
+- [ ] RTK Query for API calls
+- [ ] Dark mode support
+
+## 📄 License
+
+This project is private.
