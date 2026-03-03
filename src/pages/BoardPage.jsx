@@ -139,6 +139,7 @@ const BoardPage = () => {
                 loading={loading}
                 onSelectTask={handleSelectTask}
                 onDropTask={handleDropTask}
+                allTasks={tasks}
             />
 
             {/* Create Modal */}

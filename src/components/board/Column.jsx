@@ -1,28 +1,19 @@
-import { useState } from 'react'
+import { useDroppable } from '@dnd-kit/core'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { TASK_STATUS_COLORS, TASK_STATUS_LABELS } from '../../utils/constants'
 import TaskCard from './TaskCard'
 
-const Column = ({ status, tasks, onSelectTask, onDropTask, onDragStart }) => {
-    const [isDragOver, setIsDragOver] = useState(false)
+const Column = ({ status, tasks, onSelectTask }) => {
+    const { setNodeRef, isOver } = useDroppable({
+        id: `column-${status}`,
+        data: {
+            type: 'column',
+            status,
+        },
+    })
+
     const colors = TASK_STATUS_COLORS[status]
-
-    const handleDragOver = (e) => {
-        e.preventDefault()
-        setIsDragOver(true)
-    }
-
-    const handleDragLeave = () => {
-        setIsDragOver(false)
-    }
-
-    const handleDrop = (e) => {
-        e.preventDefault()
-        setIsDragOver(false)
-        const taskId = e.dataTransfer.getData('taskId')
-        if (taskId) {
-            onDropTask(taskId, status)
-        }
-    }
+    const taskIds = tasks.map((t) => t.id)
 
     return (
         <div className='flex flex-col min-w-[280px] w-[280px]'>
@@ -37,35 +28,34 @@ const Column = ({ status, tasks, onSelectTask, onDropTask, onDragStart }) => {
                 </span>
             </div>
 
-            {/* Droppable area */}
-            <div
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                className={`
-                    flex-1 rounded-xl p-2 space-y-2 min-h-[200px]
-                    transition-colors duration-200
-                    ${isDragOver
-                        ? 'bg-blue-50 border-2 border-dashed border-blue-300'
-                        : 'bg-gray-50/50 border-2 border-dashed border-transparent'
-                    }
-                `}
-            >
-                {tasks.map((task) => (
-                    <TaskCard
-                        key={task.id}
-                        task={task}
-                        onSelect={onSelectTask}
-                        onDragStart={onDragStart}
-                    />
-                ))}
+            {/* Droppable + sortable area */}
+            <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
+                <div
+                    ref={setNodeRef}
+                    className={`
+                        flex-1 rounded-xl p-2 space-y-2 min-h-[200px]
+                        transition-colors duration-200
+                        ${isOver
+                            ? 'bg-blue-50 border-2 border-dashed border-blue-300'
+                            : 'bg-gray-50/50 border-2 border-dashed border-transparent'
+                        }
+                    `}
+                >
+                    {tasks.map((task) => (
+                        <TaskCard
+                            key={task.id}
+                            task={task}
+                            onSelect={onSelectTask}
+                        />
+                    ))}
 
-                {tasks.length === 0 && !isDragOver && (
-                    <div className='flex items-center justify-center h-24 text-gray-400 text-sm'>
-                        No tasks
-                    </div>
-                )}
-            </div>
+                    {tasks.length === 0 && !isOver && (
+                        <div className='flex items-center justify-center h-24 text-gray-400 text-sm'>
+                            No tasks
+                        </div>
+                    )}
+                </div>
+            </SortableContext>
         </div>
     )
 }

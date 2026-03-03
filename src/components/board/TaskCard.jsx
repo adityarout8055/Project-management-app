@@ -1,23 +1,58 @@
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { memo } from 'react'
 import { TASK_PRIORITY_COLORS, TASK_PRIORITY_LABELS } from '../../utils/constants'
 import { formatDate } from '../../utils/helpers'
 
-const TaskCard = memo(({ task, onSelect, onDragStart }) => {
+const TaskCard = memo(({ task, onSelect }) => {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging,
+    } = useSortable({
+        id: task.id,
+        data: {
+            type: 'task',
+            task,
+        },
+    })
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    }
+
     const priorityColor = TASK_PRIORITY_COLORS[task.priority]
+
+    if (isDragging) {
+        return (
+            <div
+                ref={setNodeRef}
+                style={style}
+                className='
+                    bg-blue-50 border-2 border-dashed border-blue-300 rounded-lg p-3.5
+                    opacity-50 min-h-[80px]
+                '
+            />
+        )
+    }
 
     return (
         <div
-            draggable
-            onDragStart={(e) => {
-                e.dataTransfer.setData('taskId', task.id)
-                onDragStart?.(task)
-            }}
+            ref={setNodeRef}
+            style={style}
+            {...attributes}
+            {...listeners}
             onClick={() => onSelect?.(task)}
             className='
-                bg-white border border-gray-200 rounded-lg p-3.5 cursor-pointer
+                bg-white border border-gray-200 rounded-lg p-3.5 cursor-grab
                 hover:shadow-md hover:border-gray-300
-                transition-all duration-150 group
-                active:shadow-lg active:scale-[0.98]
+                transition-shadow duration-150
+                active:cursor-grabbing active:shadow-lg
+                touch-none
             '
         >
             {/* Priority badge */}
