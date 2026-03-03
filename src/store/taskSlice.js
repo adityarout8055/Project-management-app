@@ -61,6 +61,22 @@ const taskSlice = createSlice({
         clearError: (state) => {
             state.error = null
         },
+        reorderTasks: (state, action) => {
+            const { status, oldIndex, newIndex } = action.payload
+            // Get tasks for this status in current order
+            const statusTasks = state.items.filter((t) => t.status === status)
+            // Perform the reorder
+            const [moved] = statusTasks.splice(oldIndex, 1)
+            statusTasks.splice(newIndex, 0, moved)
+            // Rebuild items array: replace tasks of this status with reordered ones
+            let idx = 0
+            state.items = state.items.map((t) => {
+                if (t.status === status) {
+                    return statusTasks[idx++]
+                }
+                return t
+            })
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -104,7 +120,7 @@ const taskSlice = createSlice({
     },
 })
 
-export const { setSelectedTask, clearSelectedTask, clearError } = taskSlice.actions
+export const { setSelectedTask, clearSelectedTask, clearError, reorderTasks } = taskSlice.actions
 
 // ─── Selectors ───────────────────────────────────────────
 export const selectAllTasks = (state) => state.tasks.items

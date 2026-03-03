@@ -13,7 +13,7 @@ import Spinner from '../ui/Spinner'
 import Column from './Column'
 import TaskCard from './TaskCard'
 
-const Board = ({ groupedTasks, loading, onSelectTask, onDropTask, allTasks }) => {
+const Board = ({ groupedTasks, loading, onSelectTask, onDropTask, onReorderTasks, allTasks }) => {
     const [activeTask, setActiveTask] = useState(null)
 
     const sensors = useSensors(
@@ -41,31 +41,34 @@ const Board = ({ groupedTasks, loading, onSelectTask, onDropTask, allTasks }) =>
 
     const handleDragOver = (event) => {
         const { active, over } = event
-        if (!over) return
+        if (!over || active.id === over.id) return
 
-        const activeId = active.id
-        const overId = over.id
-
-        // Determine which column we're over
         const overData = over.data?.current
         let targetStatus = null
 
         if (overData?.type === 'column') {
-            // Dropped directly on a column
             targetStatus = overData.status
         } else if (overData?.type === 'task') {
-            // Dropped on a task — find which column that task is in
             targetStatus = overData.task.status
         }
 
         if (!targetStatus) return
 
-        // Find current task
-        const activeTask = allTasks.find((t) => t.id === activeId)
-        if (!activeTask || activeTask.status === targetStatus) return
+        const activeTask = allTasks.find((t) => t.id === active.id)
+        if (!activeTask) return
 
-        // Move task to new column
-        onDropTask(activeId, targetStatus)
+        if (activeTask.status !== targetStatus) {
+            // Cross-column move
+            onDropTask(active.id, targetStatus)
+        } else if (overData?.type === 'task') {
+            // Same-column reorder
+            const columnTasks = groupedTasks[targetStatus] || []
+            const oldIndex = columnTasks.findIndex((t) => t.id === active.id)
+            const newIndex = columnTasks.findIndex((t) => t.id === over.id)
+            if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
+                onReorderTasks(targetStatus, oldIndex, newIndex)
+            }
+        }
     }
 
     const handleDragEnd = (event) => {

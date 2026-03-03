@@ -6,6 +6,7 @@ import {
     deleteTask,
     fetchTasks,
     moveTask,
+    reorderTasks as reorderTasksAction,
     selectAllTasks,
     selectSelectedTask,
     selectTasksError,
@@ -62,6 +63,12 @@ export function useTasks() {
         [dispatch]
     )
 
+    const reorderTasks = useCallback(
+        (status, oldIndex, newIndex) =>
+            dispatch(reorderTasksAction({ status, oldIndex, newIndex })),
+        [dispatch]
+    )
+
     return {
         tasks,
         loading,
@@ -73,5 +80,6 @@ export function useTasks() {
         changeStatus,
         selectTask,
         deselectTask,
+        reorderTasks,
     }
 }

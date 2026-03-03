@@ -19,6 +19,7 @@ const BoardPage = () => {
         changeStatus,
         selectTask,
         deselectTask,
+        reorderTasks,
     } = useTasks()
 
     const {
@@ -139,6 +140,7 @@ const BoardPage = () => {
                 loading={loading}
                 onSelectTask={handleSelectTask}
                 onDropTask={handleDropTask}
+                onReorderTasks={reorderTasks}
                 allTasks={tasks}
             />
 
