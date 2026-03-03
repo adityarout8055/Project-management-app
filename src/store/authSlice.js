@@ -14,7 +14,7 @@ const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        login: (state, action) => {
+        loginAction: (state, action) => {
             const { user, password } = action.payload
             state.user = user
             state.password = password
@@ -23,7 +23,7 @@ const authSlice = createSlice({
             localStorage.setItem('user', JSON.stringify(user))
             localStorage.setItem('password', password)
         },
-        logout: (state) => {
+        logoutAction: (state) => {
             state.user = null
             state.password = null
             state.isAuthenticated = false
@@ -34,7 +34,7 @@ const authSlice = createSlice({
     },
 })
 
-export const { login, logout } = authSlice.actions
+export const { loginAction, logoutAction } = authSlice.actions
 
 // Selectors
 export const selectIsAuthenticated = (state) => state.auth.isAuthenticated

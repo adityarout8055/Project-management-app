@@ -1,25 +1,15 @@
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { Link, useNavigate } from 'react-router-dom'
-import { login } from '../features/auth/authSlice'
+import { Link } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
 
 const Login = () => {
-    const dispatch = useDispatch()
-    const navigate = useNavigate()
+    const { login } = useAuth()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
     const handleSubmit = (e) => {
         e.preventDefault()
-
-        // TODO: Replace with real API call
-        // For now, simulate a successful login
-        dispatch(login({
-            user: { id: Date.now(), email },
-            password: password,
-        }))
-
-        navigate('/')
+        login(email, password)
     }
 
     return (
@@ -49,7 +39,7 @@ const Login = () => {
                             required
                         />
                     </div>
-                    <button type='submit' className='w-full bg-black text-white py-2 px-4 rounded-lg font-medium hover:bg-gray-800'>
+                    <button type='submit' className='w-full bg-black text-white py-2 px-4 rounded-lg font-medium hover:bg-gray-800 cursor-pointer'>
                         Login
                     </button>
                 </form>
